@@ -1,0 +1,52 @@
+public class Registrar extends Fragment {
+
+    Button btnregistrate;
+    EditText etnombre, etcorreo, etcontra, etconfirmar;
+
+
+    public Registrar() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View vista = inflater.inflate(R.layout.fragment_registrar, container, false);
+
+        btnregistrate = vista.findViewById(R.id.btn_registrate);
+        etnombre = vista.findViewById(R.id.et_nombre);
+        etcorreo = vista.findViewById(R.id.et_correo);
+        etcontra = vista.findViewById(R.id.et_contra);
+
+        //A PARTIR DE AQUI SE REGISTRAN LOS DATOS EN EL ONCLICK
+        final SQLite_OpenHelper sqLite_openHelper = new SQLite_OpenHelper(getActivity());
+
+        btnregistrate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //INSERTAR LOS REGISTROS
+                SQLiteDatabase db = sqLite_openHelper.getWritableDatabase();
+                ContentValues valores = new ContentValues();
+                valores.put(SQLite_OpenHelper.TablaDatos.COLUMNA_NOMBRES, etnombre.getText().toString());
+                valores.put(SQLite_OpenHelper.TablaDatos.COLUMNA_CORREOS, etcorreo.getText().toString());
+                valores.put(SQLite_OpenHelper.TablaDatos.COLUMNA_PASSWORDS, etcontra.getText().toString());
+                long IdGuardado = db.insert(SQLite_OpenHelper.TablaDatos.NOMBRE_TABLA, SQLite_OpenHelper.TablaDatos.COLUMNA_ID, valores);
+                Toast.makeText(getActivity(), "Se registro correctamente"+ IdGuardado, Toast.LENGTH_LONG).show();
+                // GETACTIVITY SE USA EN FRAGMENTS Y GETAPLICATIONCONTEXT EN UNA CLASE
+
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Perfil llf2 = new Perfil();
+                ft.replace(R.id.contenedor, llf2);
+                ft.commit();
+            }
+        });
+
+
+
+        return vista;
+    }
+
+}
